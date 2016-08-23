@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		
+	</head>
+	<body>
+		<img src="img/h1.png" alt="" />
+		<img src="img/x2.png" alt="" />
+	</body>
+	<script type="text/javascript">
+		var imgs = document.getElementsByTagName("img");
+		
+		imgs[0].type = "h";
+		imgs[1].type = "x";
+		for (var i=0; i<imgs.length; i++){
+			
+			imgs[i].index = 0;
+			
+			imgs[i].upTimer = setInterval(function (obj){//obj = imgs[i];
+				
+//				alert(obj.src);
+				obj.index++;
+				if (obj.index>4){
+					clearInterval(obj.upTimer);
+				}
+				obj.src = "img/"+obj.type+obj.index+".png";
+			},200,imgs[i]);
+			imgs[i].onclick = function (){
+				
+				clearInterval(this.upTimer);
+			}
+//			img[i].downTimer
+		}
+		
+	</script>
+</html>

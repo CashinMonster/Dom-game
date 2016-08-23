@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style type="text/css">
+		*{
+			margin: 0;
+			padding: 0;
+		}
+		.box{
+			width: 400px;
+			height: 500px;
+			border: 1px solid red;
+			margin: 0 auto;
+			position: relative;
+			background-color: #ccc;
+		}
+		#time{
+			position: absolute;
+			left: 20px;
+			font-size: 20px;
+		}
+		#fen{
+			position: absolute;
+			right: 20px;
+			font-size: 20px;
+		}
+		#btn{
+			position: absolute;
+			top: 50px;
+			width: 50px;
+			height: 40px;
+			border: 0;
+			background-color: green;
+			font-size: 20px;
+			color: white;
+			left: 50%;
+			margin-left: -25px;
+		}
+		#loading{
+			width: 100%;
+			height: 100%;
+			background-color: black;
+			color: white;
+			font-size: 30px;
+			text-align: center;
+			position: absolute;
+		}
+		#wrap{
+			width: 70%;
+			position: absolute;
+			top: 200px;
+			left: 15%;
+		}
+		#wrap img{
+			width: 100%;
+			margin-left: 10px;
+			margin-top: 10px;
+		}
+	</style>
+</head>
+<body>
+	<div class="box">
+		<p id="time">剩余时间：60:00秒</p>
+		<p id="fen">分数：0</p>
+		<input id="btn" type="button" value="开始">
+		<div id="wrap">
+			<!--房祖名们的父级-->
+			<img src="img/1.png" alt="" />
+		</div>
+		<div id="loading">loading.....</div>
+	</div>
+</body>
+<script type="text/javascript">
+function rand(min,max){
+	return parseInt(Math.random()*(max-min))+min;
+}
+	var imgs = ["img/1.png","img/2.png"];
+	var loading = document.getElementById("loading");
+	var btn = document.getElementById("btn");
+	var time = document.getElementById("time");
+	var fen = document.getElementById("fen");
+	//存放的背景颜色
+	var colors = ["#339966","#0099FF","#6600FF","#993366","#FF3399","#FFCC99","#CCCC99","#66FFCC","#CC3300"];
+	
+	var multiple = 1;
+	var countDownNum = 60;
+	
+	var countDownBol = false;
+	var countDownTimer = setInterval(function (){
+		if (countDownBol){
+			countDownNum-=0.1;
+			countDownNum=countDownNum.toFixed(2);
+			if (countDownNum<=0){
+				alert("gameover!!!");
+				clearInterval(countDownTimer);
+			}
+			time.innerHTML = "剩余时间："+countDownNum+"秒";
+		}
+	},100);
+	
+	var loadingIndex = 0;
+	for (var i=0; i<imgs.length; i++){
+		var imgObj = new Image();
+		imgObj.src = imgs[i];
+		imgObj.onload=function (){
+			
+			loadingIndex++;
+//			alert(loadingIndex);
+			if (loadingIndex>=imgs.length-1){
+//				alert(loadingIndex);
+				loading.style.display = "none";
+			}
+		}
+	}
+	
+	var btnBol = true;
+	var nowImgs = null;
+	
+	function removeChildren(){
+		nowImgs = wrap.children;
+		for (var i=0,len=nowImgs.length; i<len; i++){
+			//.length->每次循环都会重新获取
+			wrap.removeChild(wrap.firstElementChild);
+		}
+	}
+	
+	function createImg(){
+		//递归函数
+		colors.push(colors.shift());
+		multiple++;
+		fen.innerHTML="分数："+(multiple-2);
+		if (multiple>=9){
+			multiple = 9;
+		}
+		var imgNum = Math.pow(multiple,2);
+//		alert(imgNum);
+		var imgWidth = (wrap.offsetWidth-multiple*10)/multiple+"px";
+		for (var i=0; i<imgNum; i++){
+			var imgObj = document.createElement("img");
+			imgObj.src = "img/1.png";
+			imgObj.index = i;
+			
+			imgObj.style.width = imgWidth;
+			imgObj.style.backgroundColor = colors[0];
+			wrap.appendChild(imgObj);
+		}
+		var r = rand(0,imgNum);
+		nowImgs[r].src = "img/2.png";
+		
+		nowImgs[r].onclick = function (){
+			removeChildren();
+			createImg();
+		}
+	}
+	
+	btn.onclick = function (){
+		if (btnBol == false){return;}
+		btnBol = false;
+		
+		countDownBol = true;
+		removeChildren();
+		
+		createImg();	
+		
+	}
+	
+	
+</script>
+
+
+
+
+
+
+
+
+
+
+</html>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style type="text/css">
+			#wrap{
+				width: 600px;
+				border: 1px solid red;
+				height: 500px;
+				margin: 0 auto;
+				position: relative;
+			}
+			.row{
+				position: absolute;
+				/*width: 400px;*/
+				/*通过js来获取*/
+			}
+			.row div{
+				width: 20px;
+				height: 20px;
+				border:1px solid black;
+				box-sizing: border-box;
+				float: left;
+				background-color: #ccc;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="wrap">
+			<!--<div class="row">
+				<div></div>
+				<div></div>
+				<div></div>
+				<div></div>
+				<div></div>
+				<div></div>
+				<div></div>
+				<div></div>
+				<div></div>
+				<div></div>
+				<div></div>
+				<div></div>
+				<div></div>
+				<div></div>
+				<div></div>
+				<div></div>
+				<div></div>
+				<div></div>
+				<div></div>
+				<div></div>
+			</div>-->
+		</div>
+	</body>
+	<script type="text/javascript">
+		var wrap = document.getElementById("wrap");
+		var rowNum = 20;//一行块的个数
+		var pieceWidth = 20;//块的宽度
+		var b = 0;
+		var direction = true;
+		var time = 500;
+		
+		var row = document.createElement("div");
+		row.className = "row";
+		row.style.bottom = "0px";
+		
+//		row.direction = true;//加着走
+		
+		wrap.appendChild(row);
+		row.style.width = rowNum*pieceWidth+"px";
+		
+		for (var i=0; i<rowNum; i++){
+			var piece = document.createElement("div");
+			row.appendChild(piece);
+		}
+		var rowStart = 0;
+		var maxWidth = wrap.clientWidth-row.offsetWidth;
+		
+		row.timer = setInterval(function (){
+			
+			if (direction){
+				rowStart+=20;
+				if (rowStart>=maxWidth){
+					direction = false;
+				}
+			}else{
+				rowStart-=20;
+				if (rowStart<=0){
+					direction = true;
+				}
+			}
+//			alert(this);
+			//setInterval->this->window
+			row.style.left = rowStart+"px";
+			
+		},time);
+	</script>
+</html>
+
+
+
+
+
+
+
+

@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+<title>是男人就上一百层</title>
+<style type="text/css">
+*{
+	margin: 0;
+	padding: 0;
+}
+body,html{
+	height: 100%;
+	overflow: hidden;
+}
+#wrap{
+	height: 100%;
+	margin: 0 auto;
+	position: relative;
+	width: 480px;
+	border: 1px solid yellow;
+}
+.tier{
+	position: absolute;
+}
+#scoring{
+	position: absolute;
+	top: 0;
+	font-size: 70px;
+	color: green;
+	left: 50%;
+	margin-left: -10px;
+	font-weight: bold;
+	text-shadow: 0 0 5px yellow;
+}
+.tier div{
+	height: 18px;
+	width: 18px;
+	float: left;
+	background-color: #ccc;
+	border: 1px solid black;
+	opacity: 1;
+	position: relative;
+	bottom: 0;
+	-webkit-transition: all 0.4s;
+	-moz-transition: all 0.4s;
+	-ms-transition: all 0.4s;
+	-o-transition: all 0.4s;
+	transition: all 0.4s;
+	-webkit-transform: rotate(0deg);
+	-moz-transform: rotate(0deg);
+	-ms-transform: rotate(0deg);
+	-o-transform: rotate(0deg);
+	transform: rotate(0deg);
+}
+.tier div.down{
+	opacity:0;
+	-webkit-transform: rotate(180deg);
+	-moz-transform: rotate(180deg);
+	-ms-transform: rotate(180deg);
+	-o-transform: rotate(180deg);
+	transform: rotate(180deg);
+}
+</style>
+<script type="text/javascript">
+function getPrevious(obj){
+	if (obj.previousElementSibling){
+		return obj.previousElementSibling;
+	}
+	else{
+		return obj.previousSibling;
+	}
+}
+function byClass(oParent,sClassName){
+
+	var aEl=oParent.getElementsByTagName("*");
+	var arr=[];
+	for (var i = 0; i < aEl.length; i++) {
+		if (aEl[i].className==sClassName){
+         	arr.push(aEl[i]);
+		}
+	};
+	return arr;
+}
+function fnLast(oParent){
+
+	if (oParent.lastElementChild){
+		return oParent.lastElementChild;
+	}
+	else{
+		return oParent.lastChild;
+	}
+}
+function getStyle(obj,sStyle){
+
+	if (window.getComputedStyle){
+		return getComputedStyle(obj, null)[sStyle];
+	}
+	else{
+		return obj.currentStyle[sStyle];
+	}
+}
+function fnFirst(parent){
+
+		if (parent.firstElementChild){
+			return parent.firstElementChild;
+		}
+		else{
+			return parent.firstChild;
+		}
+	}
+window.onload=function (){
+
+	var oWrap=document.getElementById("wrap");
+	var scoring=document.getElementById("scoring");
+	var iTierBottom=0;//bottom初始值
+	var oTier=byClass(document,"tier")[0];
+
+	//更改第一个层的left值
+	/*var iBodyWidth=document.documentElement.offsetWidth;//获取文档的高和宽
+	var iBodyHeight=document.documentElement.offsetHeight;*/
+	var iBodyWidth=oWrap.clientWidth;//获取文档的高和宽
+	var iBodyHeight=oWrap.clientHeight;
+	var iTierLeft=(iBodyWidth-oTier.offsetWidth)/2;
+	oTier.style.left=iTierLeft+"px";
+
+	var iHouseNumber=20;
+	var iScoringNumber=1;
+	var touchTime=500;//每次点击的间隔时间必须大于500
+	var bTouchTime=true;
+
+	var bDirection=true;
+	var iMoveTime=400;//控制每次移动的时间
+
+	function fnTierMove(){
+		var _this=this;
+		this.timer=setInterval(function (){
+
+			if (bDirection){
+				iTierLeft+=20;
+				if (iTierLeft>=iBodyWidth-_this.offsetWidth){
+					bDirection=false;
+				}
+			}else{
+				iTierLeft-=20;
+				if (iTierLeft<=0){
+					bDirection=true;
+				}
+			}
+			_this.style.left=iTierLeft+"px";
+		},iMoveTime);
+	}
+
+	function createHouse(){
+
+		iTierBottom+=20;
+		var newTier=document.createElement("div");
+		newTier.className="tier";
+		newTier.style.bottom=iTierBottom+"px";
+		newTier.style.left=iTierLeft+"px";
+		newTier.style.width=iHouseNumber*20+"px";
+
+		for (var i = 0; i < iHouseNumber; i++) {
+			var oHouse=document.createElement("div");
+			newTier.appendChild(oHouse);
+		};
+		oWrap.appendChild(newTier);
+		fnTierMove.call(newTier);
+	}
+	createHouse();
+
+	function fnDown(){
+
+		if (iTierBottom>iBodyHeight-150){
+			document.title=iTierBottom-(iBodyHeight-150);
+			oWrap.style.top=iTierBottom-(iBodyHeight-150)+"px";
+		}
+	}
+
+	document.onclick=function (){
+
+		if (bTouchTime==false){
+			return;
+		}
+		bTouchTime=false;
+		setTimeout(function (){
+			bTouchTime=true;
+		},touchTime);
+		iMoveTime-=20;
+		if (iMoveTime<100){
+			iMoveTime=100;
+		}
+		
+		//获取最后一个元素和倒数第二个的left值，进行比较
+		var lastObj=fnLast(oWrap);
+		var iLastLeftNumber=lastObj.offsetLeft;
+		// var iLastTwoLeft=oWrap.children[oWrap.children.length-2].offsetLeft;
+		var iLastTwoLeft=getPrevious(lastObj).offsetLeft;//获取不到
+
+		var moreHouse=Math.abs((iLastLeftNumber-iLastTwoLeft)/20);
+		iHouseNumber-=moreHouse;
+		// document.title=iLastLeftNumber+","+iLastTwoLeft;
+		console.log(iLastLeftNumber+","+iLastTwoLeft);
+		//清除最后一层元素上的定时器
+		clearInterval(lastObj.timer);
+		if (iHouseNumber>0){
+			iScoringNumber++;
+			scoring.innerHTML=iScoringNumber;
+		}
+		else{
+			alert("游戏结束！谢谢");
+			return;
+		}
+		fnDown();
+
+		//判断是多出还是少，以决定是哪几个会掉下去并删除
+		if (iLastLeftNumber>iLastTwoLeft){
+			//超出
+			var aLastChild=lastObj.children;
+
+			for (var i=0; i<moreHouse; i++){
+
+				// lastObj.removeChild(lastObj.children[])
+				aLastChild[aLastChild.length-i-1].className="down";
+				aLastChild[aLastChild.length-i-1].style.bottom="-30px";
+			}
+			setTimeout(function (){
+				for (var i=0; i<moreHouse; i++){
+
+					var lastObjLastChild=fnLast(lastObj);
+					lastObj.removeChild(lastObjLastChild);
+				}
+			},1000);
+		}
+		else if (iLastLeftNumber<iLastTwoLeft){
+			//没达到
+			var aLastChild=lastObj.children;
+
+			for (var i=0; i<moreHouse; i++){
+
+				// lastObj.removeChild(lastObj.children[])
+				aLastChild[i].className="down";
+				aLastChild[i].style.bottom="-30px";
+			}
+			setTimeout(function (){
+				for (var i=0; i<moreHouse; i++){
+
+					var lastObjFirstChild=fnFirst(lastObj);
+					lastObj.removeChild(lastObjFirstChild);
+				}
+				lastObj.style.left=iLastLeftNumber+moreHouse*20+"px";
+			},400);
+		}
+		setTimeout(function (){
+			createHouse();
+		},100);
+	}
+}
+</script>
+</head>
+<body>
+<div id="scoring">1</div>
+<div id="wrap">
+	<div class="tier" style="bottom:0;">
+		<div></div>
+		<div></div>
+		<div></div>
+		<div></div>
+		<div></div>
+		<div></div>
+		<div></div>
+		<div></div>
+		<div></div>
+		<div></div>
+		<div></div>
+		<div></div>
+		<div></div>
+		<div></div>
+		<div></div>
+		<div></div>
+		<div></div>
+		<div></div>
+		<div></div>
+		<div></div>
+	</div>
+</div>
+</body>
+</html>

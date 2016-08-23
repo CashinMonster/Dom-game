@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		
+	</head>
+	<body>
+		<img src="img/h1.png" alt="" />
+		<img src="img/h2" alt="" />
+	</body>
+	<script type="text/javascript">
+		var img = document.getElementsByTagName("img")[0];
+		
+		var index = 0;
+		
+		var upTimer = setInterval(function (){
+			
+			index++;
+			if(index>4){
+				clearInterval(upTimer);
+				downTimerFn();
+			}
+			img.src = "img/h"+index+".png";
+		},150);
+		var downTimer = null;
+		function downTimerFn(){
+			downTimer = setInterval(function (){
+				
+				index--;
+				if (index<=0){
+					clearInterval(downTimer);
+				}
+				img.src = "img/h"+index+".png";
+			},150);
+		}
+		
+		img.onclick = function (){
+			index = 5;
+			clearInterval(downTimer);
+			var upTimer = setInterval(function (){
+				index++;
+				if (index>=9){
+//					downTimerFn();
+					
+					clearInterval(upTimer);
+				}
+				img.src = "img/h"+index+".png";
+			},150);
+		}
+	</script>
+</html>
